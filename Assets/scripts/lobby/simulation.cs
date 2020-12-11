@@ -6,11 +6,16 @@ public class simulation : MonoBehaviour
 {
     public static int SimulationType = 3;
     public static bool isStarted = false;
+    public static int SimulationActive = 0;
     public AnimationCurve waterCurve;
 
     Transform StartBtn;
     GameObject StartChoice;
+    public GameObject RainPart;
+    public GameObject CloudPart;
+    public Light SunPart;
     public Material LampOn;
+    public Material LampOff;
 
     float timer = 0f;
     float time = 0.5f;
@@ -24,8 +29,9 @@ public class simulation : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!isStarted)
+        if (!isStarted && SimulationType != 3)
         {
+            SimulationActive = SimulationType;
             SimulationType = 3;
             timerReached = false;
             timer = 0;
@@ -38,12 +44,21 @@ public class simulation : MonoBehaviour
 
     private void initSimulation()
     {
-        Debug.Log("begin in 10 s");
-        GenerateWater.Simulate(waterCurve, 2);
+        Debug.Log("begin in 10 s : type : " + SimulationActive);
+        if (SimulationActive == 1)
+            GenerateWater.Simulate(waterCurve, 2, SimulationActive, 10f, 1f, RainPart, CloudPart, SunPart);
+        else if (SimulationActive == 4)
+            GenerateWater.Simulate(waterCurve, 2, SimulationActive, 10f, .5f, RainPart, CloudPart, SunPart);
     }
 
     private void Update()
     {
+        if (!isStarted && SimulationActive > 0)
+        {
+            StartChoice.GetComponent<MeshRenderer>().material = LampOff;
+            SimulationActive = 0;
+            SimulationType = 3;
+        }
         if (SimulationType == 3)
         {
             if (!timerReached)

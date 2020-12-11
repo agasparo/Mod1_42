@@ -24,7 +24,7 @@ public class Tsunami : MonoBehaviour
     {
         if (!simulation.isStarted)
         {
-            simulation.SimulationType = 0;
+            simulation.SimulationType = 4;
             timerReached = false;
             timer = 0;
             Vector3 currentPos = TsunamiBtn.position;
@@ -35,7 +35,7 @@ public class Tsunami : MonoBehaviour
 
     private void Update()
     {
-        if (simulation.SimulationType == 0)
+        if (simulation.SimulationType == 4)
         {
             if (!timerReached)
                 timer += Time.deltaTime;

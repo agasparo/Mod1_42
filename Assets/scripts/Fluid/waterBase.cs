@@ -47,6 +47,18 @@ public class WaterBase {
         return (waterMap);
     }
 
+    public static float[,] waterUp(float[,] waterMap, float heightAdd)
+    {
+        for (int z = 1; z < waterMap.GetLength(1) - 2; z++)
+        {
+            for (int x = 1; x < waterMap.GetLength(0) - 2; x++)
+            {
+                waterMap[x, z] += heightAdd; 
+            }
+        }
+        return (waterMap);
+    }
+
     public static float waterHorizontal(float[,] waterMap, int x, int z)
     {
         float waterHeight = waterMap[x, z - 1];
