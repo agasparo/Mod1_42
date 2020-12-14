@@ -13,20 +13,40 @@ public class Movement : MonoBehaviour {
     public Transform groundCheck;
 	public float groundDistance = 0.4f;
 	public LayerMask groundMask;
-    public GameObject Water;
+
+    public Transform waterCheck;
+    public float waterDistance = 0.4f;
+    public LayerMask waterMask;
 
     Vector3 velocity;
 	bool isGrounded;
-    bool isSwimming = false;
+    bool isSwimming;
+    bool isAnimmated = false;
+    public Camera playerView;
 
-    void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log(collision.gameObject.name);
-    }
 
     void Update() {
 
     	isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        isSwimming = Physics.CheckSphere(waterCheck.position, waterDistance, waterMask);
+
+        if (isSwimming)
+        {
+            if (!isAnimmated && !isGrounded)
+            {
+                playerView.transform.position = new Vector3(playerView.transform.position.x, playerView.transform.position.y - 3.30f, playerView.transform.position.z);
+                isAnimmated = true;
+                speed = 5f;
+            }
+        } else {
+            
+            if (isAnimmated && isGrounded)
+            {
+                playerView.transform.position = new Vector3(playerView.transform.position.x, playerView.transform.position.y + 3.30f, playerView.transform.position.z);
+                isAnimmated = false;
+                speed = 20f;
+            }
+        }
 
         if ((isGrounded || isSwimming) && velocity.y < 0)
     		velocity.y = -2f;

@@ -12,6 +12,7 @@ public class GenerateWater : MonoBehaviour {
     static GameObject Rain;
     static GameObject Cloud;
     static Light Sun;
+    static float heightLinear = 0f;
 
     public static GenerateWater instance;
 
@@ -20,12 +21,28 @@ public class GenerateWater : MonoBehaviour {
         instance = this;
     }
 
+    void RemoveWater()
+    {
+        WaterBase.waterDown(waterMap, -.01f);
+        waterDisplay display = FindObjectOfType<waterDisplay>();
+        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(waterMap, multiplier, waterCurve));
+        if (waterMap[50, 50] <= 0)
+        {
+            CancelInvoke();
+            simulation.isStarted = false;
+            Debug.Log("Finish");
+            Debug.Log(simulation.isStarted);
+        }
+    }
+
     public void DrawMapInEditor()
     {
         if (processus == 2)
         {
-            waterMap = new float[101, 101];
-            WaterBase.Params();
+            if (heightLinear == 0) {
+                waterMap = new float[101, 101];
+                WaterBase.Params();
+            }
         }
         if (witch == 1)
         {
@@ -42,12 +59,25 @@ public class GenerateWater : MonoBehaviour {
         {
             if (processus == 2)
                 waterMap = Wave.initWave(waterMap, 0.5f, 8);
-            waterMap = WaterBase.waterMove(waterMap, processus);
+            waterMap = WaterBase.waterMove(waterMap, processus, 0.5f);
+        }
+        if (witch == 2)
+        {
+            if (processus == 2)
+            {
+                heightLinear += .05f;
+                if (heightLinear <= 1)
+                    waterMap = Wave.initUniformWave(waterMap, heightLinear, 3);
+            }
+            if (heightLinear <= 1)
+                waterMap = WaterBase.waterMove(waterMap, processus, heightLinear);
+            if (processus >= 102)
+                processus = 1;
         }
         processus++;
         waterDisplay display = FindObjectOfType<waterDisplay>();
         display.DrawMesh(MeshGenerator.GenerateTerrainMesh(waterMap, multiplier, waterCurve));
-        if (waterMap[1, 1] >= 1 || processus >= 100)
+        if ((waterMap[1, 1] >= 1 && witch == 1) || (processus >= 100 && witch == 4) || (heightLinear >= 1.05 && witch == 2))
         {
             instance.CancelInvoke();
             if (Rain.activeSelf)
@@ -56,9 +86,8 @@ public class GenerateWater : MonoBehaviour {
                 Cloud.SetActive(false);
                 Sun.intensity = 1f;
             }
-            simulation.isStarted = false;
-            Debug.Log("Finish");
-            Debug.Log(simulation.isStarted);
+            Debug.Log("Finish add water");
+            InvokeRepeating("RemoveWater", 30f, 0.1f);
         }
     }
 

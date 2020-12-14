@@ -22,6 +22,19 @@ public class Wave
         return (addBorder(waterMap));
     }
 
+    public static float[,] initUniformWave(float[,] waterMap, float height, int large)
+    {
+        float divi = height / large;
+        for (int z = 1; z < large; z++)
+        {
+            for (int x = 1; x < waterMap.GetLength(0); x++)
+            {
+                waterMap[x, z] = height;
+            }
+        }
+        return (addBorder(waterMap));
+    }
+
     static float[,] addBorder(float[,] waterMap)
     {
         for (int z = 0; z < waterMap.GetLength(0); z++)

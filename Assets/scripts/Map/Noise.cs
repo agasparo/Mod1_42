@@ -54,22 +54,23 @@ public static class Noise
     		}
     	}
 
+        float borderHeight = 0.1f;
     	for (int y = 0; y < mapHeight; y++) {
 
     		for (int x = 0; x < mapWidth; x++) {
     			
     			if (x == mapWidth - 1) {
-    				noiseMap[x, y] = 0.3f;
-    				noiseMap[x - 1, y] = 0.3f;
+    				noiseMap[x, y] = borderHeight;
+    				noiseMap[x - 1, y] = borderHeight;
     			} else if (x == 1) {
-    				noiseMap[x, y] = 0.3f;
-    				noiseMap[x - 1, y] = 0.3f;
+    				noiseMap[x, y] = borderHeight;
+    				noiseMap[x - 1, y] = borderHeight;
     			} else if (y == 1) {
-    				noiseMap[x, y] = 0.3f;
-    				noiseMap[x, y - 1] = 0.3f;
+    				noiseMap[x, y] = borderHeight;
+    				noiseMap[x, y - 1] = borderHeight;
     			} else if (y == mapHeight - 1) {
-    				noiseMap[x, y] = 0f;
-    				noiseMap[x, y - 1] = 0.3f;
+    				noiseMap[x, y] = borderHeight;
+    				noiseMap[x, y - 1] = borderHeight;
     			} else
     				noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
     		}

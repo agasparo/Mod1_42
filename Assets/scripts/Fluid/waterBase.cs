@@ -15,12 +15,14 @@ public class WaterBase {
         noiseMap = MapGenerator.earthMap;
     }
 
-    public static float[,] waterMove(float[,] waterMap, int proc)
+    public static float[,] waterMove(float[,] waterMap, int proc, float heightBase)
     {
+        if (waterHeight != heightBase)
+            waterHeight = heightBase;
         waterMap = WaterMoveDesc(waterMap, proc);
         waterMap = WaterMoveAsc(waterMap, proc);
-        waterMap = smootheWater(waterMap, proc);
-        //smotheTerrainWater
+        if (proc > 7)
+            waterMap = smootheWater(waterMap, proc - 6);
         return (waterMap);
     }
 
@@ -46,6 +48,10 @@ public class WaterBase {
                                 waterMap[x, z + i] = newHeight;
                             if (z - i >= 2 && waterMap[x, z - i] != waterHeight)
                                 waterMap[x, z - i] = newHeight;
+                            if (z - i >= 2 && waterMap[x, z - i] != waterHeight && x - i >= 2 && waterMap[x - i, z - i] != waterHeight)
+                                waterMap[x - i, z - i] = newHeight;
+                            if (z - i >= 2 && waterMap[x, z - i] != waterHeight && i + x < noiseMap.GetLength(0) && waterMap[x + i, z - i] != waterHeight)
+                                waterMap[x + i, z - i] = newHeight;
                         }
                     }
                 }
@@ -132,6 +138,18 @@ public class WaterBase {
             for (int x = 1; x < waterMap.GetLength(0) - 2; x++)
             {
                 waterMap[x, z] += heightAdd; 
+            }
+        }
+        return (waterMap);
+    }
+
+    public static float[,] waterDown(float[,] waterMap, float heightAdd)
+    {
+        for (int z = 0; z < waterMap.GetLength(1); z++)
+        {
+            for (int x = 0; x < waterMap.GetLength(0); x++)
+            {
+                waterMap[x, z] += heightAdd;
             }
         }
         return (waterMap);

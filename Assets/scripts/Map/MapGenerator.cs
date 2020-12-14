@@ -63,7 +63,7 @@ public class MapGenerator : MonoBehaviour
     	if (mapHeight < 1)
     		mapHeight = 1;
 
-        /*if (terrainData != null) {
+        if (terrainData != null) {
 
             terrainData.OnValuesUpdated -= OnValuesUpdated;
             terrainData.OnValuesUpdated += OnValuesUpdated;
@@ -73,7 +73,7 @@ public class MapGenerator : MonoBehaviour
 
             noiseData.OnValuesUpdated -= OnValuesUpdated;
             noiseData.OnValuesUpdated += OnValuesUpdated;
-        }*/
+        }
 
         if (textureData != null) {
 
