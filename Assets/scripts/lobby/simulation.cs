@@ -46,7 +46,7 @@ public class simulation : MonoBehaviour
     {
         Debug.Log("begin in 10 s : type : " + SimulationActive);
         if (SimulationActive == 1)
-            GenerateWater.Simulate(waterCurve, 2, SimulationActive, 10f, .1f, RainPart, CloudPart, SunPart);
+            GenerateWater.Simulate(waterCurve, 2, SimulationActive, 10f, .01f, RainPart, CloudPart, SunPart);
         else if (SimulationActive == 4)
             GenerateWater.Simulate(waterCurve, 2, SimulationActive, 10f, .13f, RainPart, CloudPart, SunPart);
         else if (SimulationActive == 2)
