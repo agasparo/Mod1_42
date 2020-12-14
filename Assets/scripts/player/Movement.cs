@@ -13,34 +13,26 @@ public class Movement : MonoBehaviour {
     public Transform groundCheck;
 	public float groundDistance = 0.4f;
 	public LayerMask groundMask;
-
-    public Transform waterCheck;
-    public float waterDistance = 0.4f;
-    public LayerMask waterMask;
+    public GameObject Water;
 
     Vector3 velocity;
 	bool isGrounded;
-    bool isSwimming;
+    bool isSwimming = false;
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(collision.gameObject.name);
+    }
 
     void Update() {
 
     	isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        isSwimming = Physics.CheckSphere(waterCheck.position, waterDistance, waterMask);
-
 
         if ((isGrounded || isSwimming) && velocity.y < 0)
     		velocity.y = -2f;
         
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
-
-        if (Input.GetButtonDown("Jump") && isGrounded && !isSwimming) {
-
-        	velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -53,7 +45,18 @@ public class Movement : MonoBehaviour {
             teleState = (teleState - 1) * -1;
         }
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        Vector3 move = transform.right * x + transform.forward * z;
+        controller.Move(move * speed * Time.deltaTime);
+
+        if (!isSwimming)
+        {
+            if (Input.GetButtonDown("Jump") && isGrounded) {
+
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            }
+
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+        }
     }
 }

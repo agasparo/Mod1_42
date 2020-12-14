@@ -22,6 +22,7 @@ public class Tsunami : MonoBehaviour
     }
     void OnMouseDown()
     {
+        Debug.Log(simulation.isStarted);
         if (!simulation.isStarted)
         {
             simulation.SimulationType = 4;

@@ -17,6 +17,77 @@ public class WaterBase {
 
     public static float[,] waterMove(float[,] waterMap, int proc)
     {
+        waterMap = WaterMoveDesc(waterMap, proc);
+        waterMap = WaterMoveAsc(waterMap, proc);
+        waterMap = smootheWater(waterMap, proc);
+        //smotheTerrainWater
+        return (waterMap);
+    }
+
+    public static float[,] smootheWater(float[,] waterMap, int proc)
+    {
+        for (int z = proc; z <= proc + diffusion; z++)
+        {
+            for (int x = 1; x < noiseMap.GetLength(0); x++)
+            {
+                if (x < sizeMap && z < sizeMap)
+                {
+                    if (waterMap[x, z] == heightNone && isBorder(waterMap, x, z))
+                    {
+                        for (int i = 0; i < diffusion; i++)
+                        {
+                            float newHeight = waterHeight - (.01f * i);
+                            waterMap[x, z] = newHeight;
+                            if (i + x < noiseMap.GetLength(0) && waterMap[x + i, z] != waterHeight)
+                                waterMap[x + i, z] = newHeight;
+                            if (x - i >= 2 && waterMap[x - i, z] != waterHeight)
+                                waterMap[x - i, z] = newHeight;
+                            if (i + z < noiseMap.GetLength(1) && waterMap[x, z + i] != waterHeight)
+                                waterMap[x, z + i] = newHeight;
+                            if (z - i >= 2 && waterMap[x, z - i] != waterHeight)
+                                waterMap[x, z - i] = newHeight;
+                        }
+                    }
+                }
+            }
+        }
+        return (waterMap);
+    }
+
+    public static bool isBorder(float[,] waterMap, int x, int z)
+    {
+        if (waterMap[x - 1, z - 1] == waterHeight)
+            return (true);
+        if (waterMap[x - 1, z + 1] == waterHeight)
+            return (true);
+        if (waterMap[x + 1, z - 1] == waterHeight)
+            return (true);
+        if (waterMap[x + 1, z + 1] == waterHeight)
+            return (true);
+        return (false);
+    }
+
+    public static float[,] WaterMoveAsc(float[,] waterMap, int proc)
+    {
+        for (int z = proc; z <= proc + diffusion; z++)
+        {
+            for (int x = 1; x < noiseMap.GetLength(0); x++)
+            {
+                if (x < sizeMap && z < sizeMap)
+                {
+                    waterMap[x, z] = waterHorizontal(waterMap, x, z);
+                    if (waterMap[x, z] == heightNone)
+                    {
+                        waterMap[x, z] = Expend(waterMap, x, z);
+                    }
+                }
+            }
+        }
+        return (waterMap);
+    }
+
+    public static float[,] WaterMoveDesc(float[,] waterMap, int proc)
+    {
         for (int z = proc + diffusion; z >= proc; z--)
         {
             for (int x = 1; x < noiseMap.GetLength(0); x++)
@@ -24,27 +95,34 @@ public class WaterBase {
                 if (x < sizeMap && z < sizeMap)
                 {
                     waterMap[x, z] = waterHorizontal(waterMap, x, z);
-                    if (waterMap[x, z] == heightNone && (waterMap[x - 1, z - 1] > noiseMap[x, z] || waterMap[x + 1, z - 1] > noiseMap[x, z]))
-                        waterMap[x, z] = waterHeight;
-                    if (waterMap[x, z] == heightNone && (waterMap[x - 1, z + 1] > noiseMap[x, z] || waterMap[x + 1, z + 1] > noiseMap[x, z]))
-                        waterMap[x, z] = waterHeight;
-                }
-            }
-        }
-        for (int z = proc + diffusion; z >= proc; z--)
-        {
-            for (int x = 1; x < noiseMap.GetLength(0); x++)
-            {
-                if (x < sizeMap && z < sizeMap)
-                {
-                    if (waterMap[x, z] == heightNone && (waterMap[x - 1, z - 1] > noiseMap[x, z] || waterMap[x + 1, z - 1] > noiseMap[x, z]))
-                        waterMap[x, z] = waterHeight;
-                    if (waterMap[x, z] == heightNone && (waterMap[x - 1, z + 1] > noiseMap[x, z] || waterMap[x + 1, z + 1] > noiseMap[x, z]))
-                        waterMap[x, z] = waterHeight;
+                    if (waterMap[x, z] == heightNone)
+                    {
+                        waterMap[x, z] = Expend(waterMap, x, z);
+                    }
                 }
             }
         }
         return (waterMap);
+    }
+
+    public static float Expend(float[,] waterMap, int x, int z)
+    {
+        if (waterMap[x - 1, z - 1] > noiseMap[x, z] && isSource(waterMap[x - 1, z - 1]))
+            return (waterHeight);
+        if (waterMap[x + 1, z - 1] > noiseMap[x, z] && isSource(waterMap[x + 1, z - 1]))
+            return (waterHeight);
+        if (waterMap[x - 1, z + 1] > noiseMap[x, z] && isSource(waterMap[x - 1, z + 1]))
+            return (waterHeight);
+        if (waterMap[x + 1, z + 1] > noiseMap[x, z] && isSource(waterMap[x + 1, z + 1]))
+            return(waterHeight);
+        return (0f);
+    }
+
+    public static bool isSource(float height)
+    {
+        if (height == waterHeight)
+            return (true);
+        return (false);
     }
 
     public static float[,] waterUp(float[,] waterMap, float heightAdd)
@@ -61,8 +139,10 @@ public class WaterBase {
 
     public static float waterHorizontal(float[,] waterMap, int x, int z)
     {
-        float waterHeight = waterMap[x, z - 1];
-        if (waterHeight < noiseMap[x, z])
+        float currentWaterHeight = waterMap[x, z - 1];
+        if (currentWaterHeight > waterHeight)
+            currentWaterHeight = heightNone;
+        if (currentWaterHeight < noiseMap[x, z])
             return (heightNone);
         return (waterHeight);
     }

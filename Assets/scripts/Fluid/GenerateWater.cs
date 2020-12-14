@@ -8,7 +8,7 @@ public class GenerateWater : MonoBehaviour {
     static AnimationCurve waterCurve;
     static int processus = 2;
     static int witch = 0;
-    static float multiplier = 13.59f;
+    static float multiplier = 13f;
     static GameObject Rain;
     static GameObject Cloud;
     static Light Sun;
@@ -58,6 +58,7 @@ public class GenerateWater : MonoBehaviour {
             }
             simulation.isStarted = false;
             Debug.Log("Finish");
+            Debug.Log(simulation.isStarted);
         }
     }
 
