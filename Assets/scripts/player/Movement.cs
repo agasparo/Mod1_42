@@ -18,11 +18,15 @@ public class Movement : MonoBehaviour {
     public float waterDistance = 0.4f;
     public LayerMask waterMask;
 
+    public AudioSource walkSound;
+    public AudioSource swimmSound;
+
     Vector3 velocity;
 	bool isGrounded;
     bool isSwimming;
     bool isAnimmated = false;
     public Camera playerView;
+    Vector3 lastPosition;
 
 
     void Update() {
@@ -38,6 +42,8 @@ public class Movement : MonoBehaviour {
                 isAnimmated = true;
                 speed = 5f;
             }
+            if (swimmSound.isPlaying == false)
+                swimmSound.Play();
         } else {
             
             if (isAnimmated && isGrounded)
@@ -66,7 +72,18 @@ public class Movement : MonoBehaviour {
         }
 
         Vector3 move = transform.right * x + transform.forward * z;
+        if (!isSwimming && isGrounded)
+        {
+            if (lastPosition != move)
+            {
+                if (walkSound.isPlaying == false)
+                    walkSound.Play();
+            }
+            else
+                walkSound.Stop();
+        }
         controller.Move(move * speed * Time.deltaTime);
+        lastPosition = move;
 
         if (!isSwimming)
         {

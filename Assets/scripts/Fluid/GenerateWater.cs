@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class GenerateWater : MonoBehaviour {
@@ -13,6 +14,10 @@ public class GenerateWater : MonoBehaviour {
     static GameObject Cloud;
     static Light Sun;
     static float heightLinear = 0f;
+    static Material Sunning;
+    static Material Rainning;
+    static GameObject TextScenes;
+    static Text infos;
 
     public static GenerateWater instance;
 
@@ -30,8 +35,9 @@ public class GenerateWater : MonoBehaviour {
         {
             CancelInvoke();
             simulation.isStarted = false;
-            Debug.Log("Finish");
-            Debug.Log(simulation.isStarted);
+            infos.text = "Simulation is finish";
+            InvokeRepeating("HideText", 5f, 10f);
+            TextScenes.SetActive(true);
         }
     }
 
@@ -51,6 +57,7 @@ public class GenerateWater : MonoBehaviour {
                 Rain.SetActive(true);
                 Cloud.SetActive(true);
                 Sun.intensity = .5f;
+                RenderSettings.skybox = Rainning;
             }
             waterMap = RainSimulate();
 
@@ -85,9 +92,11 @@ public class GenerateWater : MonoBehaviour {
                 Rain.SetActive(false);
                 Cloud.SetActive(false);
                 Sun.intensity = 1f;
+                RenderSettings.skybox = Sunning;
             }
-            Debug.Log("Finish add water");
-            InvokeRepeating("RemoveWater", 30f, 0.1f);
+            infos.text = "PrevSimulation is finish, remove water in 20 s";
+            TextScenes.SetActive(true);
+            InvokeRepeating("HideText", 5f, 10f);
         }
     }
 
@@ -99,7 +108,14 @@ public class GenerateWater : MonoBehaviour {
         return (waterMap);
     }
 
-    public static void Simulate(AnimationCurve waterCurveSimulate, int proc, int type, float begin, float refreshTime, GameObject RainPart, GameObject CloudPart, Light SunPart)
+    void HideText()
+    {
+        TextScenes.SetActive(false);
+        CancelInvoke();
+        InvokeRepeating("RemoveWater", 20f, 0.1f);
+    }
+
+    public static void Simulate(AnimationCurve waterCurveSimulate, int proc, int type, float begin, float refreshTime, GameObject RainPart, GameObject CloudPart, Light SunPart, Material Sung, Material Raing, GameObject TextScene, Text simulationsInfos)
     {
         waterCurve = waterCurveSimulate;
         processus = proc;
@@ -107,6 +123,10 @@ public class GenerateWater : MonoBehaviour {
         Rain = RainPart;
         Cloud = CloudPart;
         Sun = SunPart;
+        Sunning = Sung;
+        Rainning = Raing;
+        TextScenes = TextScene;
+        infos = simulationsInfos;
         if (instance)
             instance.InvokeRepeating("DrawMapInEditor", begin, refreshTime);
     }
