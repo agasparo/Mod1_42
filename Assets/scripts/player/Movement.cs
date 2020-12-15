@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour {
 
@@ -69,6 +70,12 @@ public class Movement : MonoBehaviour {
                 controller.transform.position = new Vector3(50f, 150f, 50f);
             controller.enabled = true;
             teleState = (teleState - 1) * -1;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OptionMenu.FileName = "";
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
         }
 
         Vector3 move = transform.right * x + transform.forward * z;

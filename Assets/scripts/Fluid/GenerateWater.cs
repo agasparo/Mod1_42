@@ -18,6 +18,7 @@ public class GenerateWater : MonoBehaviour {
     static Material Rainning;
     static GameObject TextScenes;
     static Text infos;
+    static int remove = 0;
 
     public static GenerateWater instance;
 
@@ -33,6 +34,7 @@ public class GenerateWater : MonoBehaviour {
         display.DrawMesh(MeshGenerator.GenerateTerrainMesh(waterMap, multiplier, waterCurve));
         if (waterMap[50, 50] <= 0)
         {
+            remove = 0;
             CancelInvoke();
             simulation.isStarted = false;
             infos.text = "Simulation is finish";
@@ -96,6 +98,7 @@ public class GenerateWater : MonoBehaviour {
             }
             infos.text = "PrevSimulation is finish, remove water in 20 s";
             TextScenes.SetActive(true);
+            remove = 1;
             InvokeRepeating("HideText", 5f, 10f);
         }
     }
@@ -112,7 +115,8 @@ public class GenerateWater : MonoBehaviour {
     {
         TextScenes.SetActive(false);
         CancelInvoke();
-        InvokeRepeating("RemoveWater", 20f, 0.1f);
+        if (remove == 1)
+            InvokeRepeating("RemoveWater", 20f, 0.1f);
     }
 
     public static void Simulate(AnimationCurve waterCurveSimulate, int proc, int type, float begin, float refreshTime, GameObject RainPart, GameObject CloudPart, Light SunPart, Material Sung, Material Raing, GameObject TextScene, Text simulationsInfos)

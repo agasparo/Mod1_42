@@ -7,6 +7,7 @@ public static class Noise
     public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset) {
 
     	float[,] noiseMap = new float[mapWidth, mapHeight];
+        float[,] CoordinateNeeded = Normalizer.MapData;
 
     	System.Random prng = new System.Random(seed);
     	Vector2[] octavesOffsets = new Vector2[octaves];
@@ -40,13 +41,15 @@ public static class Noise
 	    			float sampleY = (y - halfHeight) / scale * frequency + octavesOffsets[i].y;
 
 	    			float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    if (CoordinateNeeded[x, y] > 0)
+                        perlinValue = CoordinateNeeded[x, y] * 2 - 1;
 	    			noiseHeight += perlinValue * amplitude;
 
 	    			amplitude *= persistance;
 	    			frequency *= lacunarity;
     			}
 
-    			if (noiseHeight > maxNoiseHeight)
+                if (noiseHeight > maxNoiseHeight)
     				maxNoiseHeight = noiseHeight;
     			else if (noiseHeight < minNoiseHeight)
     				minNoiseHeight = noiseHeight;
