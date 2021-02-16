@@ -25,7 +25,7 @@ Scénario Pluie
 
 ![Alt Text](https://media.giphy.com/media/SssmcjE73Nee5oumm4/giphy.gif)
 
-Un 4ème scénario à été ajouté à la fin de chacun afin de vidé la map de l'eau à sa surface
+Un 4ème scénario à été ajouté à la fin de chacun afin de vider la map de l'eau à sa surface
 
 Vaccum
 
